@@ -5,7 +5,7 @@ import { useStoryCrafterStore } from "../state/useStoryCrafterStore";
 
 
 export default function CharacterDetailView() {
-    const { selectedStory, selectedCharacter, actions } = useStoryCrafterStore();
+    const { selectedStory, selectedCharacter, setCurrentView, showConfirm, updateCharacter, deleteCharacter } = useStoryCrafterStore();
 
     if (!selectedStory || !selectedCharacter) return null;
 
@@ -23,7 +23,7 @@ export default function CharacterDetailView() {
                 <div className="max-w-3xl mx-auto">
                     {/* Back Button */}
                     <button
-                        onClick={() => actions.setCurrentView('characters')}
+                        onClick={() => setCurrentView('characters')}
                         className="text-sm lg:text-base text-gray-500 hover:text-gray-900 transition-colors mb-6 lg:mb-8"
                     >
                         ← Back to Characters
@@ -34,11 +34,13 @@ export default function CharacterDetailView() {
                             Character Details
                         </h1>
                         <button
-                            onClick={() => actions.showConfirm(
-                                'Delete Character',
-                                'Are you sure you want to delete this character?',
-                                () => actions.deleteCharacter(selectedStory.id, selectedCharacter.id)
-                            )}
+                            onClick={() => showConfirm("Delete character?", "This cannot be undone.", () => {
+                                // defer mutation to next tick
+                                setTimeout(() => {
+                                    deleteCharacter(selectedStory.id, selectedCharacter.id);
+                                    setCurrentView("characters");
+                                }, 0);
+                            })}
                             className="px-4 lg:px-5 py-2 lg:py-2.5 border border-red-200 text-red-600 rounded-lg text-sm lg:text-base font-medium hover:bg-red-50 transition-colors"
                         >
                             Delete
@@ -50,7 +52,7 @@ export default function CharacterDetailView() {
                         <ImageUpload
                             currentImage={selectedCharacter.imageUrl}
                             onImageChange={(imageData) =>
-                                actions.updateCharacter(selectedStory.id, selectedCharacter.id, {
+                                updateCharacter(selectedStory.id, selectedCharacter.id, {
                                     imageUrl: imageData
                                 })
                             }
@@ -67,7 +69,7 @@ export default function CharacterDetailView() {
                                 type="text"
                                 value={selectedCharacter.name}
                                 onChange={e =>
-                                    actions.updateCharacter(selectedStory.id, selectedCharacter.id, {
+                                    updateCharacter(selectedStory.id, selectedCharacter.id, {
                                         name: e.target.value
                                     })
                                 }
@@ -83,7 +85,7 @@ export default function CharacterDetailView() {
                             <Dropdown
                                 value={selectedCharacter.role}
                                 onChange={(newRole) =>
-                                    actions.updateCharacter(selectedStory.id, selectedCharacter.id, {
+                                    updateCharacter(selectedStory.id, selectedCharacter.id, {
                                         role: newRole
                                     })
                                 }
@@ -100,7 +102,7 @@ export default function CharacterDetailView() {
                                 type="text"
                                 value={selectedCharacter.age || ''}
                                 onChange={e =>
-                                    actions.updateCharacter(selectedStory.id, selectedCharacter.id, {
+                                    updateCharacter(selectedStory.id, selectedCharacter.id, {
                                         age: e.target.value
                                     })
                                 }
@@ -118,7 +120,7 @@ export default function CharacterDetailView() {
                                 type="text"
                                 value={selectedCharacter.gender || ''}
                                 onChange={e =>
-                                    actions.updateCharacter(selectedStory.id, selectedCharacter.id, {
+                                    updateCharacter(selectedStory.id, selectedCharacter.id, {
                                         gender: e.target.value
                                     })
                                 }
@@ -135,7 +137,7 @@ export default function CharacterDetailView() {
                             <textarea
                                 value={selectedCharacter.personality || ''}
                                 onChange={e =>
-                                    actions.updateCharacter(selectedStory.id, selectedCharacter.id, {
+                                    updateCharacter(selectedStory.id, selectedCharacter.id, {
                                         personality: e.target.value
                                     })
                                 }

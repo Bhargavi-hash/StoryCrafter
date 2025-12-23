@@ -9,7 +9,7 @@ export default function WorldMapDetailView({
   onCancel,
   onDelete
 }) {
-  const { actions } = useStoryCrafterStore();
+  const { showConfirm  } = useStoryCrafterStore();
   const [draft, setDraft] = useState({
     title: map.title || "",
     imageUrl: map.imageUrl || "",
@@ -32,7 +32,7 @@ export default function WorldMapDetailView({
 
             <div className="flex gap-2 lg:gap-3">
               <button
-                onClick={() => actions.showConfirm(
+                onClick={() => showConfirm(
                   'Delete Map',
                   'Are you sure you want to delete this map?',
                   onDelete

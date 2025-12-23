@@ -3,7 +3,7 @@ import { useStoryCrafterStore } from "../state/useStoryCrafterStore";
 
 
 export default function CharactersView() {
-    const { characters, selectedStory, actions } = useStoryCrafterStore();
+    const { characters, selectedStory, addCharacter, goToCharacterDetail } = useStoryCrafterStore();
 
     if (!selectedStory) return null;
 
@@ -19,7 +19,7 @@ export default function CharactersView() {
                             Characters
                         </h1>
                         <button
-                            onClick={() => actions.addCharacter(selectedStory.id)}
+                            onClick={() => addCharacter(selectedStory.id)}
                             className="px-5 lg:px-6 py-2.5 lg:py-3 bg-gray-900 text-white rounded-xl text-sm lg:text-base font-medium hover:bg-gray-800 transition-colors whitespace-nowrap"
                         >
                             + New Character
@@ -30,7 +30,7 @@ export default function CharactersView() {
                         {list.map(c => (
                             <div
                                 key={c.id}
-                                onClick={() => actions.goToCharacterDetail(c)}
+                                onClick={() => goToCharacterDetail(c)}
                                 className="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer transition-all hover:shadow-sm hover:border-gray-300"
                             >
                                 {c.imageUrl ? (
@@ -58,7 +58,7 @@ export default function CharactersView() {
                         <div className="text-center py-16 lg:py-24 text-gray-300 border border-dashed border-gray-200 rounded-xl">
                             <p className="mb-3 lg:mb-4 text-sm lg:text-base">No characters yet</p>
                             <button
-                                onClick={() => actions.addCharacter(selectedStory.id)}
+                                onClick={() => addCharacter(selectedStory.id)}
                                 className="text-sm lg:text-base text-gray-900 hover:underline"
                             >
                                 Create your first character

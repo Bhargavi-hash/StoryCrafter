@@ -5,7 +5,7 @@ import { useStoryCrafterStore } from "../state/useStoryCrafterStore";
 
 
 export default function ChapterEditorView() {
-    const { selectedStory, selectedChapter, actions } = useStoryCrafterStore();
+    const { selectedStory, selectedChapter, updateChapter, getChapterHistory, saveChapterVersion, setCurrentView } = useStoryCrafterStore();
     const editorRef = useRef(null);
     const [showToolbar, setShowToolbar] = useState(false);
     const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
@@ -65,7 +65,7 @@ export default function ChapterEditorView() {
                 // Perform autosave - only update content, don't create version
                 if (editorRef.current) {
                     const content = editorRef.current.innerHTML;
-                    actions.updateChapter(selectedStory.id, selectedChapter.id, { content });
+                    updateChapter(selectedStory.id, selectedChapter.id, { content });
                     setHasUnsavedChanges(false);
                     // Don't clear hasUnsavedVersion - user can still create version snapshot
                     
@@ -95,7 +95,7 @@ export default function ChapterEditorView() {
     ];
 
     // Get chapter history
-    const chapterHistory = actions.getChapterHistory(selectedStory.id, selectedChapter.id) || [];
+    const chapterHistory = getChapterHistory(selectedStory.id, selectedChapter.id) || [];
 
     // Calculate word count from HTML content
     const getWordCount = (html) => {
@@ -135,7 +135,7 @@ export default function ChapterEditorView() {
 
         if (editorRef.current) {
             const content = editorRef.current.innerHTML;
-            actions.saveChapterVersion(selectedStory.id, selectedChapter.id, content);
+            saveChapterVersion(selectedStory.id, selectedChapter.id, content);
             lastVersionContentRef.current = content;
             setHasUnsavedChanges(false);
             setHasUnsavedVersion(false);
@@ -152,19 +152,19 @@ export default function ChapterEditorView() {
                 message: 'Chapter title is empty. Are you sure you want to go back?',
                 type: 'confirm',
                 onConfirm: () => {
-                    actions.setCurrentView('story-detail');
+                    setCurrentView('story-detail');
                 }
             });
             return;
         }
-        actions.setCurrentView('story-detail');
+        setCurrentView('story-detail');
     };
 
     const handleRestore = (version) => {
         if (editorRef.current) {
             editorRef.current.innerHTML = version.content;
             setLocalContent(version.content);
-            actions.updateChapter(selectedStory.id, selectedChapter.id, { content: version.content });
+            updateChapter(selectedStory.id, selectedChapter.id, { content: version.content });
             lastVersionContentRef.current = version.content;
             setHasUnsavedChanges(false);
             setHasUnsavedVersion(false);
@@ -265,7 +265,7 @@ export default function ChapterEditorView() {
                             <Dropdown
                                 value={selectedChapter.status}
                                 onChange={(newStatus) =>
-                                    actions.updateChapter(selectedStory.id, selectedChapter.id, {
+                                    updateChapter(selectedStory.id, selectedChapter.id, {
                                         status: newStatus
                                     })
                                 }
@@ -281,7 +281,7 @@ export default function ChapterEditorView() {
                         type="text"
                         value={selectedChapter.title}
                         onChange={e =>
-                            actions.updateChapter(selectedStory.id, selectedChapter.id, {
+                            updateChapter(selectedStory.id, selectedChapter.id, {
                                 title: e.target.value
                             })
                         }
@@ -304,40 +304,6 @@ export default function ChapterEditorView() {
                         className="flex items-center justify-center w-full max-w-md"
                         style={{ marginTop: 'clamp(0.5rem, 0.75vw, 0.75rem)' }}
                     >
-                        <svg
-  xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 300 40"
-  className="w-full"
-  style={{ maxWidth: 'clamp(22rem, 32vw, 36rem)' }}
->
-  {/* Left flourish */}
-  <path
-    d="M 20 20 
-       C 60 8, 100 8, 140 20"
-    stroke="#c7c9cc"
-    strokeWidth="1"
-    fill="none"
-    strokeLinecap="round"
-  />
-
-  {/* Center ornament */}
-  <circle
-    cx="150"
-    cy="20"
-    r="2"
-    fill="#9ca3af"
-  />
-
-  {/* Right flourish */}
-  <path
-    d="M 160 20 
-       C 200 8, 240 8, 280 20"
-    stroke="#c7c9cc"
-    strokeWidth="1"
-    fill="none"
-    strokeLinecap="round"
-  />
-</svg>
 
                     </div>
                 </div>

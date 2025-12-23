@@ -2,7 +2,7 @@ import { useStoryCrafterStore } from "../../state/useStoryCrafterStore";
 import Dropdown from "../ui/Dropdown";
 
 export default function ChapterListItem({ chapter }) {
-    const { selectedStory, actions } = useStoryCrafterStore(s => s.setCurrentView && s);
+    const { selectedStory, goToChapterEditor, updateChapter, showConfirm, deleteChapter } = useStoryCrafterStore(s => s.setCurrentView && s);
 
     const statusOptions = [
         { value: 'writing', label: 'Writing' },
@@ -17,7 +17,7 @@ export default function ChapterListItem({ chapter }) {
         >
             <div
                 className="flex-1 cursor-pointer"
-                onClick={() => actions.goToChapterEditor(chapter)}
+                onClick={() => goToChapterEditor(chapter)}
             >
                 <h3 
                     className="font-medium text-gray-900 mb-1.5 group-hover:text-gray-600 transition-colors"
@@ -44,7 +44,7 @@ export default function ChapterListItem({ chapter }) {
                     <Dropdown
                         value={chapter.status}
                         onChange={(newStatus) =>
-                            actions.updateChapter(selectedStory.id, chapter.id, {
+                            updateChapter(selectedStory.id, chapter.id, {
                                 status: newStatus
                             })
                         }
@@ -54,10 +54,10 @@ export default function ChapterListItem({ chapter }) {
                 <button
                     onClick={e => {
                         e.stopPropagation();
-                        actions.showConfirm(
+                        showConfirm(
                             'Delete Chapter',
                             'Are you sure you want to delete this chapter?',
-                            () => actions.deleteChapter(selectedStory.id, chapter.id)
+                            () => deleteChapter(selectedStory.id, chapter.id)
                         );
                     }}
                     className="text-gray-400 hover:text-red-500 px-2"

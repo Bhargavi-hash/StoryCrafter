@@ -5,7 +5,7 @@ import WorldMapCard from "../components/world/WorldMapCard";
 import WorldMapDetailView from "./WorldMapDetailView";
 
 export default function WorldView() {
-  const { worldMaps, selectedStory, actions } = useStoryCrafterStore();
+  const { worldMaps, selectedStory, updateWorldMap, addWorldMap, deleteWorldMap } = useStoryCrafterStore();
   const [editingMapId, setEditingMapId] = useState(null);
 
   if (!selectedStory) {
@@ -28,12 +28,12 @@ export default function WorldView() {
       <WorldMapDetailView
         map={editingMap}
         onSave={(updates) => {
-          actions.updateWorldMap(selectedStory.id, editingMap.id, updates);
+          updateWorldMap(selectedStory.id, editingMap.id, updates);
           setEditingMapId(null);
         }}
         onCancel={() => setEditingMapId(null)}
         onDelete={() => {
-          actions.deleteWorldMap(selectedStory.id, editingMap.id);
+          deleteWorldMap(selectedStory.id, editingMap.id);
           setEditingMapId(null);
         }}
       />
@@ -58,7 +58,7 @@ export default function WorldView() {
 
             <button
               onClick={() => {
-                const id = actions.addWorldMap(selectedStory.id);
+                const id = addWorldMap(selectedStory.id);
                 setEditingMapId(id);
               }}
               className="px-5 lg:px-6 py-2.5 lg:py-3 bg-gray-900 text-white rounded-xl text-sm lg:text-base font-medium hover:bg-gray-800 whitespace-nowrap"

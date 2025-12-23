@@ -7,7 +7,12 @@ import DescriptionModal from "../components/ui/DescriptionModal";
 import { useStoryCrafterStore } from "../state/useStoryCrafterStore";
 
 export default function StoryDetailView() {
-  const { chapters, selectedStory, actions } = useStoryCrafterStore();
+  const {
+    chapters,
+    selectedStory,
+    updateStory,
+    addChapter
+  } = useStoryCrafterStore();
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isDescModalOpen, setIsDescModalOpen] = useState(false);
@@ -75,7 +80,7 @@ export default function StoryDetailView() {
               <ImageUpload
                 currentImage={selectedStory.coverImage}
                 onImageChange={(imageData) =>
-                  actions.updateStory(selectedStory.id, { coverImage: imageData })
+                  updateStory(selectedStory.id, { coverImage: imageData })
                 }
                 label="Story Cover"
                 aspectRatio="portrait"
@@ -90,22 +95,22 @@ export default function StoryDetailView() {
                   value={titleDraft}
                   onChange={(e) => setTitleDraft(e.target.value)}
                   onBlur={() => {
-                    actions.updateStory(selectedStory.id, { title: titleDraft });
+                    updateStory(selectedStory.id, { title: titleDraft });
                     setIsEditingTitle(false);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === "Escape") {
-                      actions.updateStory(selectedStory.id, { title: titleDraft });
+                      updateStory(selectedStory.id, { title: titleDraft });
                       setIsEditingTitle(false);
                       e.target.blur();
                     }
                   }}
                   autoFocus
                   className="w-full border-b border-gray-200 bg-transparent focus:outline-none pb-2 font-light"
-                  style = {{
-                      fontSize: 'clamp(1.875rem, 3vw + 1rem, 3.5rem)',
-                      caretColor: '#1f2937',
-                      fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif'
+                  style={{
+                    fontSize: 'clamp(1.875rem, 3vw + 1rem, 3.5rem)',
+                    caretColor: '#1f2937',
+                    fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif'
                   }}
                 />
               ) : (
@@ -155,7 +160,7 @@ export default function StoryDetailView() {
                   label="Genre"
                   tags={selectedStory.genre || []}
                   onChange={(newGenre) =>
-                    actions.updateStory(selectedStory.id, { genre: newGenre })
+                    updateStory(selectedStory.id, { genre: newGenre })
                   }
                   placeholder="Add genre (e.g., Fantasy, Sci-Fi)..."
                 />
@@ -164,7 +169,7 @@ export default function StoryDetailView() {
                   label="Tags"
                   tags={selectedStory.tags || []}
                   onChange={(newTags) =>
-                    actions.updateStory(selectedStory.id, { tags: newTags })
+                    updateStory(selectedStory.id, { tags: newTags })
                   }
                   placeholder="Add tag..."
                 />
@@ -177,7 +182,7 @@ export default function StoryDetailView() {
             style={{ marginBottom: 'clamp(1rem, 1.5vw, 1.5rem)' }}>
             <h2 className="font-medium" style={{ fontSize: 'clamp(1.125rem, 1.2vw + 0.5rem, 1.5rem)' }}>Chapters</h2>
             <button
-              onClick={() => actions.addChapter(selectedStory.id)}
+              onClick={() => addChapter(selectedStory.id)}
               className="bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors whitespace-nowrap"
               style={{
                 padding: 'clamp(0.5rem, 0.8vw, 0.75rem) clamp(1rem, 1.2vw, 1.5rem)',
@@ -194,8 +199,8 @@ export default function StoryDetailView() {
             <button
               onClick={() => setActiveTab("writing")}
               className={`font-medium transition-colors relative whitespace-nowrap ${activeTab === "writing"
-                  ? "text-gray-900"
-                  : "text-gray-500 hover:text-gray-700"
+                ? "text-gray-900"
+                : "text-gray-500 hover:text-gray-700"
                 }`}
               style={{
                 padding: 'clamp(0.5rem, 0.8vw, 0.75rem) clamp(0.75rem, 1vw, 1rem)',
@@ -210,8 +215,8 @@ export default function StoryDetailView() {
             <button
               onClick={() => setActiveTab("completed")}
               className={`font-medium transition-colors relative whitespace-nowrap ${activeTab === "completed"
-                  ? "text-gray-900"
-                  : "text-gray-500 hover:text-gray-700"
+                ? "text-gray-900"
+                : "text-gray-500 hover:text-gray-700"
                 }`}
               style={{
                 padding: 'clamp(0.5rem, 0.8vw, 0.75rem) clamp(0.75rem, 1vw, 1rem)',
@@ -226,8 +231,8 @@ export default function StoryDetailView() {
             <button
               onClick={() => setActiveTab("review")}
               className={`font-medium transition-colors relative whitespace-nowrap ${activeTab === "review"
-                  ? "text-gray-900"
-                  : "text-gray-500 hover:text-gray-700"
+                ? "text-gray-900"
+                : "text-gray-500 hover:text-gray-700"
                 }`}
               style={{
                 padding: 'clamp(0.5rem, 0.8vw, 0.75rem) clamp(0.75rem, 1vw, 1rem)',
@@ -261,11 +266,10 @@ export default function StoryDetailView() {
               <button
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  currentPage === 1
-                    ? 'text-gray-300 cursor-not-allowed'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                }`}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === 1
+                  ? 'text-gray-300 cursor-not-allowed'
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
               >
                 ← Prev
               </button>
@@ -297,11 +301,10 @@ export default function StoryDetailView() {
                     <button
                       key={pageNum}
                       onClick={() => setCurrentPage(pageNum)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === pageNum
-                          ? 'bg-gray-900 text-white'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === pageNum
+                        ? 'bg-gray-900 text-white'
+                        : 'text-gray-700 hover:bg-gray-50'
+                        }`}
                     >
                       {pageNum}
                     </button>
@@ -313,11 +316,10 @@ export default function StoryDetailView() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  currentPage === totalPages
-                    ? 'text-gray-300 cursor-not-allowed'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                }`}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === totalPages
+                  ? 'text-gray-300 cursor-not-allowed'
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
               >
                 Next →
               </button>
@@ -332,7 +334,7 @@ export default function StoryDetailView() {
         onClose={() => setIsDescModalOpen(false)}
         initialValue={selectedStory.description || ''}
         onSave={(newDescription) => {
-          actions.updateStory(selectedStory.id, { description: newDescription });
+          updateStory(selectedStory.id, { description: newDescription });
         }}
       />
     </div>

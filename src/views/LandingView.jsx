@@ -71,7 +71,12 @@ function Section({ title, stories, onStoryClick, updateStory }) {
 
 
 export default function LandingView() {
-  const { stories, actions } = useStoryCrafterStore();
+  const {
+    stories,
+    addStory,
+    goToStoryDetail,
+    updateStory
+  } = useStoryCrafterStore();
 
   const ongoing = stories.filter(s => s.status === "ongoing");
   const completed = stories.filter(s => s.status === "completed");
@@ -88,8 +93,9 @@ export default function LandingView() {
             Organize your stories, characters, and worlds
           </p>
         </div>
+
         <button
-          onClick={actions.addStory}
+          onClick={addStory}
           className="px-5 lg:px-6 py-2.5 lg:py-3 bg-gray-900 text-white rounded-xl text-sm lg:text-base font-medium hover:bg-gray-800 transition-colors whitespace-nowrap"
         >
           + New Story
@@ -99,25 +105,23 @@ export default function LandingView() {
       <Section
         title="Ongoing"
         stories={ongoing}
-        onStoryClick={actions.goToStoryDetail}
-        updateStory={actions.updateStory}
+        onStoryClick={goToStoryDetail}
+        updateStory={updateStory}
       />
 
       <Section
         title="Completed"
         stories={completed}
-        onStoryClick={actions.goToStoryDetail}
-        updateStory={actions.updateStory}
+        onStoryClick={goToStoryDetail}
+        updateStory={updateStory}
       />
 
       <Section
         title="On Hold"
         stories={onHold}
-        onStoryClick={actions.goToStoryDetail}
-        updateStory={actions.updateStory}
+        onStoryClick={goToStoryDetail}
+        updateStory={updateStory}
       />
     </div>
   );
 }
-
-
